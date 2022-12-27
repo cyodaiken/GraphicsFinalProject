@@ -1,0 +1,19 @@
+Hi, I’m Chaia. I looked at instancing for my final project. Instancing is a rendering technique that renders multiple copies of the same mesh in a scene at once. Rendering thousands of objects using the regular draw calls would effect performance because sending data from the Cpu to the Gpu is expensive. Instancing solves this problem. 
+
+Here, I was able to render 8 million textured cubes.
+I implemented a camera with mouse look and you can move around with the arrow keys and the a/z keys. You can see that there isn't a lag despite the number of objects rendered. Finally you can press q to quit. 
+
+I built the initial project structure up from scratch and integrated the camera class from the assignments. 
+Let’s take a look at how to implement instancing.  
+
+Rendering the same object thousands of times isn’t typically useful if the object is positioned in the same location each time. One way to solve this is to use an instanced array that you pass into the vertex shader, which is used to offset the position of each object.  
+This is where I decide the number of instances and populate this instanced array. Right now there are 8 million instances. I decided to equally space the cubes out to create the pattern we saw. 
+
+Sending this array data to the GPU is pretty similar to sending position or color data. However there is a glVertexAttribDivisor function. The first parameter is just the index of the vertex attribute. The second parameter is basically the rate at which to consume the instance array data. In this scenario, a divisor of 1 means for each instance use the next group of x, y, z data in the instanced array. (So we are not using the same offset values for multiple instances).  
+
+The draw call is very similar to the regular rendering functions. But it takes an extra parameter that sets the number of instances we want to render. (In this case 8 million) It sends all the required data to the GPU at this time, and then tells the GPU how it should draw the instances with a single call. The GPU then renders all these instances without having to continually communicate with the CPU.
+
+Here in the vertex shader: the instanced array data comes in and the offset is added to the position data for each instance. 
+
+Finally, here is a look at the project using a colored cube, instead of a textured cube. I think this shows the pattern the offsets create better. 
+
